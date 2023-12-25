@@ -2,7 +2,12 @@ package com.bengisusahin.cryptocurrencyk.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bengisusahin.cryptocurrencyk.R
+import com.bengisusahin.cryptocurrencyk.adapter.RecyclerViewAdapter
+import com.bengisusahin.cryptocurrencyk.databinding.ActivityMainBinding
 import com.bengisusahin.cryptocurrencyk.model.CryptoModel
 import com.bengisusahin.cryptocurrencyk.service.CryptoAPI
 import retrofit2.Call
@@ -11,15 +16,25 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), RecyclerViewAdapter.Listener {
+
+    private lateinit var binding: ActivityMainBinding
 
     private val BASE_URL = "https://raw.githubusercontent.com/"
     private var cryptoModels: ArrayList<CryptoModel>? = null
+    private var recyclerViewAdapter: RecyclerViewAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         //https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json
+
+        //RecyclerView
+
+        val layoutManager:RecyclerView.LayoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = layoutManager
 
         loadData()
     }
@@ -43,10 +58,17 @@ class MainActivity : AppCompatActivity() {
                     response.body()?.let {
                         //eğerki bu boş gelmediyse bunu yap demek
                         cryptoModels = ArrayList(it)
+
+                        cryptoModels?.let {
+                            recyclerViewAdapter = RecyclerViewAdapter(it, this@MainActivity)
+                            binding.recyclerView.adapter = recyclerViewAdapter
+                        }
+                        /*
                         for (cryptoModel : CryptoModel in cryptoModels!!){
                             println(cryptoModel.currency)
                             println(cryptoModel.price)
                         }
+                         */
                     }
                 }
             }
@@ -55,5 +77,9 @@ class MainActivity : AppCompatActivity() {
                 t.printStackTrace()            }
 
         })
+    }
+
+    override fun onItemClick(cryptoModel: CryptoModel) {
+        Toast.makeText(this,"Clicked: ${cryptoModel.currency}", Toast.LENGTH_LONG).show()
     }
 }

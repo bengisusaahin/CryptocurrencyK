@@ -12,9 +12,7 @@ import com.bengisusahin.cryptocurrencyk.model.CryptoModel
 class RecyclerViewAdapter(private val cryptoList : ArrayList<CryptoModel>, private val listener:Listener) : RecyclerView.Adapter<RecyclerViewAdapter.RowHolder>() {
 
     interface Listener{
-        fun onItemClick(cryptoModel: CryptoModel){
-
-        }
+        fun onItemClick(cryptoModel: CryptoModel)
     }
     private val colors: Array<String> = arrayOf("#076d7d","#1f2f32","#fce9d5","#eceeda","#008080","#4633f2","#1dd7f3","#3285f3")
     class RowHolder(val binding: RowLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
